@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import json
 import datetime
 
@@ -64,12 +66,13 @@ def format_ms_to_hours_minutes(ms):
     return '{0} h {1} min'.format(h, m)
 
 
-def build_content_for_number_widget(value, text):
+def build_content_for_number_widget(value, text, prefix=None):
     content = {
         "item": [
             {
                 "value": value,
                 "text": text,
+                "prefix": prefix,
             }
         ]
     }
@@ -88,7 +91,7 @@ def total_billable_this_week():
 def resources_invested_this_week():
     w = Weekly(calculate='earnings')
     estimated_revenue = w.earnings()
-    content = build_content_for_number_widget(estimated_revenue, 'Resources invested this week (GBP)')
+    content = build_content_for_number_widget(estimated_revenue, 'Resources invested this week (GBP)', prefix='£')
     return flask.jsonify(**content)
 
 
