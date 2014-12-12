@@ -12,14 +12,15 @@ app = Flask(__name__)
 
 class Weekly(object):
 
-    def __init__(self, calculate='time'):
+    def __init__(self, day_in_week=None, calculate='time'):
         self.api_token='10ca7619f6ade0f7769adc6ff55af416'
         self.wsid = 737293
         self.url = 'https://toggl.com/reports/api/v2/weekly'
+        self.day_in_week = day_in_week if day_in_week else datetime.date.today()
         self.calculate = calculate
 
     def get_dates(self):
-        today = datetime.date.today()
+        today = self.day_in_week
         start_week = today - datetime.timedelta(days=today.weekday())
         end_week = start_week + datetime.timedelta(days=6)
         return (start_week, end_week)
@@ -63,35 +64,46 @@ def format_ms_to_hours_minutes(ms):
     s = ms/1000
     m, s = divmod(s, 60)
     h, m = divmod(m, 60)
-    return '{0} h {1} min'.format(h, m)
+    return '{0}h{1}m'.format(h, m)
 
 
-def build_content_for_number_widget(value, text, prefix=None):
+def build_item_for_number_widget(value, text=None, prefix=None, value_type=None):
+    return {
+        "value": value,
+        "text": text,
+        "prefix": prefix,
+        "type": value_type,
+    }
+
+
+def build_content_for_number_widget(items):
     content = {
-        "item": [
-            {
-                "value": value,
-                "text": text,
-                "prefix": prefix,
-            }
-        ]
+        "item": items
     }
     return content
 
 
 @app.route("/")
 def total_billable_this_week():
-    w = Weekly()
-    billable_hours = ms_to_hours(w.billable())
-    content = build_content_for_number_widget(billable_hours, 'Billable hours this week')
+    w_this_week = Weekly()
+    w_last_week = Weekly(day_in_week=datetime.date.today() - datetime.timedelta(days=7))
+    billable_hours_this_week = ms_to_hours(w_this_week.billable())
+    billable_hours_last_week = ms_to_hours(w_last_week.billable())
+    item_this_week = build_item_for_number_widget(billable_hours_this_week)
+    item_last_week = build_item_for_number_widget(billable_hours_last_week)
+    content = build_content_for_number_widget([item_this_week, item_last_week])
     return flask.jsonify(**content)
 
 
-@app.route("/revenue-week")
+@app.route("/resources-week")
 def resources_invested_this_week():
-    w = Weekly(calculate='earnings')
-    estimated_revenue = w.earnings()
-    content = build_content_for_number_widget(estimated_revenue, 'Resources invested this week', prefix='£')
+    w_this_week = Weekly(calculate='earnings')
+    w_last_week = Weekly(day_in_week=datetime.date.today() - datetime.timedelta(days=7), calculate='earnings')
+    resources_this_week = w_this_week.earnings()
+    resources_last_week = w_last_week.earnings()
+    item_this_week = build_item_for_number_widget(resources_this_week, prefix='£')
+    item_last_week = build_item_for_number_widget(resources_last_week, prefix='£')
+    content = build_content_for_number_widget([item_this_week, item_last_week])
     return flask.jsonify(**content)
 
 
