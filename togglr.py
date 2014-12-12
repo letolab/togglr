@@ -10,10 +10,11 @@ app = Flask(__name__)
 
 class Weekly(object):
 
-    def __init__(self):
+    def __init__(self, calculate='time'):
         self.api_token='10ca7619f6ade0f7769adc6ff55af416'
         self.wsid = 737293
         self.url = 'https://toggl.com/reports/api/v2/weekly'
+        self.calculate = calculate
 
     def get_dates(self):
         today = datetime.date.today()
@@ -25,10 +26,11 @@ class Weekly(object):
         return date.strftime('%Y-%m-%d')
 
     def build_url(self, since, until):
-        params = '?workspace_id={wsid}&since={since}&until={until}&user_agent=testing'.format(
+        params = '?workspace_id={wsid}&since={since}&until={until}&user_agent=testing&calculate={calculate}'.format(
             wsid=self.wsid,
             since=since,
-            until=until
+            until=until,
+            calculate=self.calculate,
         )
         return self.url + params
 
@@ -41,6 +43,10 @@ class Weekly(object):
         url = self.build_url(since, until)
         r = requests.get(url, headers=headers, auth=auth)
         return json.loads(r.content)
+
+    def earnings(self):
+        report = self.fetch()
+        return report['week_totals'][0]['amount'][-1]
 
     def billable(self):
         report = self.fetch()
@@ -80,10 +86,8 @@ def total_billable_this_week():
 
 @app.route("/revenue-week")
 def resources_invested_this_week():
-    HOURLY_RATE = 70
-    w = Weekly()
-    billable_hours = ms_to_hours(w.billable())
-    estimated_revenue = billable_hours * HOURLY_RATE
+    w = Weekly(calculate='earnings')
+    estimated_revenue = w.earnings()
     content = build_content_for_number_widget(estimated_revenue, 'Resources invested this week (GBP)')
     return flask.jsonify(**content)
 
