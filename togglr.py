@@ -2,19 +2,22 @@
 # -*- coding: utf-8 -*-
 import json
 import datetime
+import os
 
 import flask
 from flask import Flask
 import requests
 
 app = Flask(__name__)
+API_TOKEN = os.environ.get('API_TOKEN')
+WSID = os.environ.get('WSID')
 
 
 class Weekly(object):
 
     def __init__(self, day_in_week=None, calculate='time'):
-        self.api_token='10ca7619f6ade0f7769adc6ff55af416'
-        self.wsid = 737293
+        self.api_token = API_TOKEN
+        self.wsid = WSID
         self.url = 'https://toggl.com/reports/api/v2/weekly'
         self.day_in_week = day_in_week if day_in_week else datetime.date.today()
         self.calculate = calculate
