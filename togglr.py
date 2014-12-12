@@ -79,12 +79,12 @@ def total_billable_this_week():
 
 
 @app.route("/revenue-week")
-def estimated_revenue_this_week():
+def resources_invested_this_week():
     HOURLY_RATE = 70
     w = Weekly()
     billable_hours = ms_to_hours(w.billable())
     estimated_revenue = billable_hours * HOURLY_RATE
-    content = build_content_for_number_widget(estimated_revenue, 'Estimated revenue this week (GBP)')
+    content = build_content_for_number_widget(estimated_revenue, 'Resources invested this week (GBP)')
     return flask.jsonify(**content)
 
 
