@@ -91,7 +91,7 @@ def total_billable_this_week():
 def resources_invested_this_week():
     w = Weekly(calculate='earnings')
     estimated_revenue = w.earnings()
-    content = build_content_for_number_widget(estimated_revenue, 'Resources invested this week (GBP)', prefix='£')
+    content = build_content_for_number_widget(estimated_revenue, 'Resources invested this week', prefix='£')
     return flask.jsonify(**content)
 
 
