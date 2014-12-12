@@ -47,6 +47,10 @@ class Weekly(object):
         return report['total_billable']
 
 
+def ms_to_hours(ms):
+    return (ms/1000)/3600
+
+
 def format_ms_to_hours_minutes(ms):
     s = ms/1000
     m, s = divmod(s, 60)
@@ -57,12 +61,12 @@ def format_ms_to_hours_minutes(ms):
 @app.route("/")
 def total_billable_this_week():
     w = Weekly()
-    billable_str = format_ms_to_hours_minutes(w.billable())
+    billable_hours = ms_to_hours(w.billable())
     content = {
         "item": [
             {
-                "value": billable_str,
-                "text": "Total billable this week"
+                "value": billable_hours,
+                "text": "Billable hours this week"
             }
         ]
     }
