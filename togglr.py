@@ -58,19 +58,35 @@ def format_ms_to_hours_minutes(ms):
     return '{0} h {1} min'.format(h, m)
 
 
+def build_content_for_number_widget(value, text):
+    content = {
+        "item": [
+            {
+                "value": value,
+                "text": text,
+            }
+        ]
+    }
+    return content
+
+
 @app.route("/")
 def total_billable_this_week():
     w = Weekly()
     billable_hours = ms_to_hours(w.billable())
-    content = {
-        "item": [
-            {
-                "value": billable_hours,
-                "text": "Billable hours this week"
-            }
-        ]
-    }
+    content = build_content_for_number_widget(billable_hours, 'Billable hours this week')
     return flask.jsonify(**content)
+
+
+@app.route("/revenue-week")
+def estimated_revenue_this_week():
+    HOURLY_RATE = 70
+    w = Weekly()
+    billable_hours = ms_to_hours(w.billable())
+    estimated_revenue = billable_hours * HOURLY_RATE
+    content = build_content_for_number_widget(estimated_revenue, 'Estimated revenue this week (GBP)')
+    return flask.jsonify(**content)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
