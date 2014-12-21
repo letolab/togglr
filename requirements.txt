@@ -6,3 +6,4 @@ gunicorn==19.1.1
 itsdangerous==0.24
 requests==2.5.0
 wsgiref==0.1.2
+mock==1.0.1
