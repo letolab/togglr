@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import unittest
 import json
-import re
 
 from mock import patch
 import mock
