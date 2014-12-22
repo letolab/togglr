@@ -7,7 +7,7 @@ import re
 from mock import patch
 import mock
 
-import togglr
+from togglr import togglr
 
 
 class TogglResponseExample(object):
@@ -164,7 +164,7 @@ class TestEndpoints(unittest.TestCase):
     def _get_json_response(self, url):
         return json.loads(self.app.get(url).data)
 
-    @patch('togglr.TogglWeekly.fetch')
+    @patch('togglr.toggl_api.TogglWeekly.fetch')
     def test_billable(self, fetch):
         hours = 15
         ms_in_hour = 3600000
@@ -177,7 +177,7 @@ class TestEndpoints(unittest.TestCase):
         self.assertEqual(data['item'][0]['value'], hours)
         self.assertEqual(data['item'][1]['value'], hours)
 
-    @patch('togglr.TogglWeekly.fetch')
+    @patch('togglr.toggl_api.TogglWeekly.fetch')
     def test_resources(self, fetch):
         earnings = 100
         resp = TogglResponseExample.earnings()
@@ -188,7 +188,7 @@ class TestEndpoints(unittest.TestCase):
         self.assertEqual(data['item'][0]['value'], earnings)
         self.assertEqual(data['item'][1]['value'], earnings)
 
-    @patch('togglr.TogglWeekly.fetch')
+    @patch('togglr.toggl_api.TogglWeekly.fetch')
     def test_billable_total_is_none(self, fetch):
         resp = TogglResponseExample.time()
         resp['total_billable'] = None
@@ -198,7 +198,7 @@ class TestEndpoints(unittest.TestCase):
         self.assertEqual(data['item'][0]['value'], 0)
         self.assertEqual(data['item'][1]['value'], 0)
 
-    @patch('togglr.TogglWeekly.fetch')
+    @patch('togglr.toggl_api.TogglWeekly.fetch')
     def test_earnings_total_is_none(self, fetch):
         resp = TogglResponseExample.earnings()
         resp['week_totals'][0]['amount'][-1] = None

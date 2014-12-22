@@ -1,6 +1,6 @@
 # TOGGLR
 
-Very tiny flask app that fetches data from Toggl's API and feeds it into
+Very tiny Flask app that fetches data from Toggl's API and feeds it into
 Geckoboard widgets.
 
 Work in progress. Don't judge.
@@ -20,7 +20,7 @@ Work in progress. Don't judge.
     - Alternatively, `TOGGLR_SETTINGS` can point to a Python file that sets the
       above variables (along with any other Flask config variables).
 
-3. `python togglr.py`.
+3. Run `python src/togglr.py`.
 
 
 ## Tests
