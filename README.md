@@ -20,7 +20,7 @@ Work in progress. Don't judge.
     - Alternatively, `TOGGLR_SETTINGS` can point to a Python file that sets the
       above variables (along with any other Flask config variables).
 
-3. Run `python src/togglr.py`.
+3. Run `python togglr/togglr.py`.
 
 
 ## Tests
