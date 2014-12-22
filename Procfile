@@ -1,1 +1,1 @@
-web: gunicorn togglr:app --log-file=-
+web: gunicorn togglr.togglr:app --log-file=-
