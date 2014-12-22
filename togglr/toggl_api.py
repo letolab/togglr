@@ -28,7 +28,7 @@ class TogglWeekly(object):
         self.given_date = date if date else datetime.date.today()
 
         self.url = 'https://toggl.com/reports/api/v2/weekly'
-        self.starting_date = utils.get_first_weekday_for_day(self.given_date)
+        self.starting_date = utils.get_first_day_of_week_for_date(self.given_date)
         self.ending_date = self.starting_date + datetime.timedelta(days=6)
 
     def _format_date(self, date):

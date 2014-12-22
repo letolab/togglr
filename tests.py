@@ -163,45 +163,52 @@ class TestEndpoints(unittest.TestCase):
     def _get_json_response(self, url):
         return json.loads(self.app.get(url).data)
 
-    @patch('togglr.toggl_api.TogglWeekly.fetch')
-    def test_billable(self, fetch):
+    def _add_requests_api(self, get, return_value, status_code=200):
+        mock_resp = mock.Mock()
+        mock_resp.json = mock.Mock(return_value=return_value)
+        mock_resp.status_code = status_code
+        mock_resp.reason = 'foo'
+        get.return_value = mock_resp
+
+    @patch('requests.get')
+    def test_billable(self, get):
         hours = 15
         ms_in_hour = 3600000
 
         resp = TogglResponseExample.time()
         resp['total_billable'] = hours * ms_in_hour
-        fetch.return_value = resp
+        self._add_requests_api(get, resp)
 
         data = self._get_json_response('/')
         self.assertEqual(data['item'][0]['value'], hours)
         self.assertEqual(data['item'][1]['value'], hours)
 
-    @patch('togglr.toggl_api.TogglWeekly.fetch')
-    def test_resources(self, fetch):
+    @patch('requests.get')
+    def test_resources(self, get):
         earnings = 100
         resp = TogglResponseExample.earnings()
         resp['week_totals'][0]['amount'][-1] = earnings
-        fetch.return_value = resp
+        self._add_requests_api(get, resp)
 
         data = self._get_json_response('/resources-week')
         self.assertEqual(data['item'][0]['value'], earnings)
         self.assertEqual(data['item'][1]['value'], earnings)
 
-    @patch('togglr.toggl_api.TogglWeekly.fetch')
-    def test_billable_total_is_none(self, fetch):
+    @patch('requests.get')
+    def test_billable_total_is_none(self, get):
         resp = TogglResponseExample.time()
         resp['total_billable'] = None
-        fetch.return_value = resp
+        self._add_requests_api(get, resp)
 
         data = self._get_json_response('/')
         self.assertEqual(data['item'][0]['value'], 0)
         self.assertEqual(data['item'][1]['value'], 0)
 
-    @patch('togglr.toggl_api.TogglWeekly.fetch')
-    def test_earnings_total_is_none(self, fetch):
+    @patch('requests.get')
+    def test_earnings_total_is_none(self, get):
         resp = TogglResponseExample.earnings()
         resp['week_totals'][0]['amount'][-1] = None
-        fetch.return_value = resp
+        self._add_requests_api(get, resp)
 
         data = self._get_json_response('/resources-week')
         self.assertEqual(data['item'][0]['value'], 0)

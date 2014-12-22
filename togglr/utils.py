@@ -2,9 +2,9 @@
 import datetime
 
 
-def get_first_weekday_for_day(day):
+def get_first_day_of_week_for_date(date):
     # Week starts Monday
-    return day - datetime.timedelta(days=day.weekday())
+    return date - datetime.timedelta(days=date.weekday())
 
 
 def ms_to_hours(ms):
