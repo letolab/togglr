@@ -5,6 +5,7 @@ import urllib
 import requests
 
 import utils
+from config import TOGGLR_CONFIG
 
 
 class TogglServerError(Exception):
@@ -13,7 +14,7 @@ class TogglServerError(Exception):
 
 class TogglWeekly(object):
 
-    def __init__(self, api_token, wsid, date=None, calculate='time'):
+    def __init__(self, date=None, calculate='time', wsid=None, api_token=None):
         """ Fetch seven-day durations or earnings report from Toggl API.
 
         - api_token:    Toggl API token
@@ -22,10 +23,10 @@ class TogglWeekly(object):
                         in which this date occurs.
         - calculate:    'time' (to report durations) or 'earnings'.
         """
-        self.api_token = api_token
-        self.wsid = wsid
+        self.given_date = date or datetime.date.today()
         self.calculate = calculate
-        self.given_date = date if date else datetime.date.today()
+        self.wsid = wsid or TOGGLR_CONFIG.get_internal('wsid')
+        self.api_token = api_token or TOGGLR_CONFIG.get_internal('api_token')
 
         self.url = 'https://toggl.com/reports/api/v2/weekly'
         self.starting_date = utils.get_first_day_of_week_for_date(self.given_date)
